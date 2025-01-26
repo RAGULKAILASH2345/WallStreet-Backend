@@ -1,0 +1,17 @@
+{
+    "message": "Login successful.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI3N2ZiMDQzLTA2ZmMtNGY3OC1iYzBjLTY2YzRhZWNkMGIxNCIsImlhdCI6MTY3OTc0ODg3OX0.5JYPoTNV0JxYHr6ywiRg7ZHKpINRaz9u94hWq9KH6Pg",
+    "kid": "K-277fb043-06fc-4f78-bc0c-66c4aecd0b14",
+    "mkid": "K-180467",
+    "firstname": "Kaushik",
+    "lastname": "Ravishankar",
+    "email": "rknarayan02@gmail.com",
+    "phone": "+919025713726",
+    "college": "College of Engineering Guindy",
+    "year": 4,
+    "cegian": true,
+    "dept": "CSE",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "roll": "2019103536"
+}
