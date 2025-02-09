@@ -17,6 +17,10 @@ module.exports=(sequelize,datatypes)=>{
         number: {
             type:datatypes.INTEGER,
         },
+        description: {
+            type: datatypes.STRING,
+            allowNull: false,
+        }
         
     });
     return transactions;

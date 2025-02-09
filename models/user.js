@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { validate } = require('uuid');
 module.exports = (sequelize, DataTypes) => {
   class kUser23 extends Model {
     /**
@@ -37,7 +38,24 @@ module.exports = (sequelize, DataTypes) => {
     roll: DataTypes.STRING,
     salt: DataTypes.STRING,
     vsaltTime: DataTypes.DATE,
-    vsalt: DataTypes.STRING
+    vsalt: DataTypes.STRING,
+    balance:{
+      type: DataTypes.DOUBLE,
+      defaultValue: 100000.0,
+    },
+    profit:{
+      type: DataTypes.DOUBLE,
+      defaultValue: 0.0,
+      validate:{
+        min: 0.1,
+      },
+      check: {
+        priceGreaterThanZero: {
+          args: [0],
+          msg: 'Price must be greater than zero',
+        },
+      },
+    }
   }, {
     sequelize,
     modelName: 'kUser23',
