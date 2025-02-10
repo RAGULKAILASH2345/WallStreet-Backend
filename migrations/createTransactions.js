@@ -18,8 +18,12 @@ module.exports = {
             flag: {
                 type: Sequelize.STRING
             },
-            number: {
+            noOfStocks: {
                 type: Sequelize.INTEGER
+            },
+            description: {
+                type: datatypes.STRING,
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,
