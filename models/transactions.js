@@ -14,7 +14,7 @@ module.exports=(sequelize,datatypes)=>{
         flag: {
             type:datatypes.STRING,
         },
-        number: {
+        noOfStocks: {
             type:datatypes.INTEGER,
         },
         description: {

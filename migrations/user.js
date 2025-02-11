@@ -39,6 +39,14 @@ module.exports = (sequelize, DataTypes) => {
     salt: DataTypes.STRING,
     vsaltTime: DataTypes.DATE,
     vsalt: DataTypes.STRING,
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+  },
+  updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+  }
   }, {
     sequelize,
     modelName: 'kUser23',

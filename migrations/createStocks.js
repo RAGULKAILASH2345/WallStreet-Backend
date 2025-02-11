@@ -8,33 +8,94 @@ module.exports = {
                 type: Sequelize.STRING,
 
             },
-            Aquashop: {
-                type: Sequelize.INTEGER
+            QuantumCoreSystems: {
+                type:datatypes.INTEGER,
             },
-            RazerElectronics: {
-                type: Sequelize.INTEGER
+            NeonByteTechnologies: {
+                type:datatypes.INTEGER,
             },
-            BVInfra: {
-                type: Sequelize.INTEGER
+            HyperNovaSystems: {
+                type:datatypes.INTEGER,
             },
-            GoalEnterprise: {
-                type: Sequelize.INTEGER
+            SkyNetRobotics: {
+                type:datatypes.INTEGER,
             },
-            MedPharma: {
-                type: Sequelize.INTEGER
+            TitanSportswear: {
+                type:datatypes.INTEGER,
             },
-            Paradigm: {
-                type: Sequelize.INTEGER
+            ProBallEquipment: {
+                type:datatypes.INTEGER,
             },
-            VIFinance: {
-                type: Sequelize.INTEGER
+            StrikeForceSports: {
+                type:datatypes.INTEGER,
             },
-            ForgeTech: {
-                type: Sequelize.INTEGER
+            ZenithMotors: {
+                type:datatypes.INTEGER,
+            },
+            OrionAutoTech: {
+                type:datatypes.INTEGER,
+            },
+            VoltEdgeMotors: {
+                type:datatypes.INTEGER,
+            },
+            TitanXAutomobiles: {
+                type:datatypes.INTEGER,
+            },
+            StellarBank: {
+                type:datatypes.INTEGER,
+            },
+            EverTrustFinancial: {
+                type:datatypes.INTEGER,
+            },
+            NovaCapitalHoldings: {
+                type:datatypes.INTEGER,
+            },
+            QuantumPay: {
+                type:datatypes.INTEGER,
+            },
+            SwiftCart: {
+                type:datatypes.INTEGER,
+            },
+            NeoWearFashion: {
+                type:datatypes.INTEGER,
+            },
+            HorizonMart: {
+                type:datatypes.INTEGER,
+            },
+            BuySmartRetail: {
+                type:datatypes.INTEGER,
+            },
+            BioVantaPharmaceuticals: {
+                type:datatypes.INTEGER,
+            },
+            MedexGenLabs: {
+                type:datatypes.INTEGER,
+            },
+            NeuroSynBiotech: {
+                type:datatypes.INTEGER,
+            },
+            GenovaHealth: {
+                type:datatypes.INTEGER,
+            },
+            HorizonTechInnovations: {
+                type:datatypes.INTEGER,
             },
             Wallet: {
-                type: Sequelize.INTEGER
+                type:datatypes.INTEGER,
             },
+            profit:{
+                type: datatypes.DOUBLE,
+                defaultValue: 0.0,
+                validate:{
+                  min: 0.1,
+                },
+                check: {
+                  priceGreaterThanZero: {
+                    args: [0],
+                    msg: 'Price must be greater than zero',
+                  },
+                },
+              },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
