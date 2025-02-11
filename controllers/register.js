@@ -67,7 +67,7 @@ const login = async (req, res) => {
         message: "Invalid credentials",
       });
     }
-    console.log(process.env.JWTSECRET);
+    // console.log(process.env.JWTSECRET);
     const token = jwt.sign({ id: user.kid }, process.env.JWTSECRET);
 
     return res.status(200).json({

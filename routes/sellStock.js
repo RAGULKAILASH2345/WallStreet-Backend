@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/tokenAuth");
 const stocks = require("../controllers/stocks");
 
 router.get(
-	"/:column/:value/:nos/",
+	"/sellStock/:column/:value/:nos/",
 	authMiddleware.tokenAuth,
 	stocks.sellStock,
 )
