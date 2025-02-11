@@ -95,72 +95,48 @@ const getWallet = async (req, res) => {
 
 const buyStock = async (req, res) => {
 	try {
-		const hrs = new Date().getHours();
-		if (hrs < 9 || hrs >= 16){
-			return res.status(403).send({
-				message: "Market is closed!"
-			});
-		}
-		const { email } = req.user;
-		const  column  = req.params.column;
-		const  value  = req.params.value;
-		const  nos = req.params.nos;
-
-		if (nos < 0) {
-			return res.status(403).send({
-				message: "Invalid Number of Stocks"
-			});
-		}
-
-		const user = await users.findOne({
-			where: {
-				email,
-			},
+	  const { email } = req.user;
+	  const column = req.params.column;
+	  const value = parseFloat(req.params.value);
+	  const nos = parseInt(req.params.nos, 10);
+  
+	  if (isNaN(nos) || nos <= 0) {
+		return res.status(403).send({
+		  message: "Invalid Number of Stocks"
 		});
-
-		if (!user) {
-			return res.status(404).send({
-				message: "User details not found."
-			});
+	  }
+  
+	  const user = await users.findOne({ where: { email } });
+	  if (!user) {
+		return res.status(404).send({ message: "User details not found." });
+	  }
+  
+	  const stockData = await sequelize.query(
+		`UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
+		{
+		  replacements: { nos, value, email },
+		  nest: true,
+		  type: Sequelize.QueryTypes.UPDATE,
 		}
-
-
-		const stockData = await sequelize.query(
-			`UPDATE stocks SET "${column}"="${column}" + ${nos}, "Wallet"="Wallet"-${nos}*${value} WHERE email='${email}'`,
-			{
-				nest: true,
-				type: Sequelize.QueryTypes.UPDATE
-			}
-		);
-		//		const stockData = await stocks.update({
-		//			[column]: sequelize.literal(`${column} + ${nos}`),
-		//			Wallet : sequelize.literal(`Wallet - ${nos}*${value}`)
-		//		},{
-		//			where: {
-		//				email,
-		//			},
-		//		});
-
-		if (stockData) {
-			//			transactions.create({
-			transactions.create({
-				email: email,
-				company: column,
-				flag: "Bought",
-				number: nos,
-			});
-			return res.status(200).send({message:"transaction success"});
-		}
-		else {
-			return res.status(404).send({
-				message: "User details not found",
-			});
-		}
+	  );
+  
+	  if (stockData) {
+		transactions.create({
+		  email: email,
+		  company: column,
+		  flag: "Bought",
+		  number: nos,
+		});
+		return res.status(200).send({ message: "Transaction success" });
+	  } else {
+		return res.status(404).send({ message: "Stock update failed" });
+	  }
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ message: "Server Error. Try again.", gh: 'con' });
+	  console.error(error);
+	  return res.status(500).send({ message: "Server Error. Try again." });
 	}
-}
+  };
+  
 
 const sellStock = async (req, res) => {
 	try {
