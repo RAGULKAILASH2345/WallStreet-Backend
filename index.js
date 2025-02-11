@@ -92,7 +92,7 @@ app.use("/buyStock", buyStockRouter);
 app.use("/sellStock", sellStockRouter);
 app.use("/history", historyRouter);
 app.use("/admin", adminRouter);
-app.use("/register", registerRouter);
+app.use("/user", registerRouter);
 // app.use('/api/auth', authRoutes);
 
 // catch 404 and forward to error handler
