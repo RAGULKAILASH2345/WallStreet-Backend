@@ -41,7 +41,7 @@ const checkUser = async (req, res) => {
         .then(() => {
           console.timeEnd("create wallet");
           return res.status(200).send({
-            state: "Registered Succesfully",
+            state: "Registered Successfully",
           });
         })
         .catch((err) => {
@@ -151,6 +151,9 @@ const buyStock = async (req, res) => {
     const value = parseFloat(req.params.value);
     const nos = parseInt(req.params.nos, 10);
 
+    const stockPurchaseAmount = value * nos;
+
+
     if (isNaN(nos) || nos <= 0) {
       return res.status(403).send({
         message: "Invalid Number of Stocks",
@@ -162,6 +165,14 @@ const buyStock = async (req, res) => {
       return res.status(404).send({ message: "User details not found." });
     }
 
+    const balance = await stocks.findOne({
+      where: {email},
+      attributes: ['Wallet'],
+      raw: true
+    })
+;
+
+    if(balance.Wallet >= stockPurchaseAmount){
     const stockData = await sequelize.query(
       `UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
       {
@@ -183,6 +194,9 @@ const buyStock = async (req, res) => {
     } else {
       return res.status(404).send({ message: "Stock update failed" });
     }
+  } else { 
+    return res.status(404).send({message: "Insufficient Balance"});
+  }
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: "Server Error. Try again." });
@@ -191,14 +205,9 @@ const buyStock = async (req, res) => {
 
 const sellStock = async (req, res) => {
   try {
-    const hour = new Date().getHours();
-    if (hour > 16 || hour < 9) {
-      return res.status(403).send({
-        message: "Market is Closed!",
-      });
-    }
     const { email } = req.user;
     const column = req.params.column;
+    const description = req.body.desc;
     const value = req.params.value;
     const nos = req.params.nos;
     if (nos < 0) {
@@ -207,9 +216,9 @@ const sellStock = async (req, res) => {
       });
     }
 
-    if (value != graph[index][column][5]) {
+    if (isNaN(nos) || nos <= 0) {
       return res.status(403).send({
-        message: "Suprise Mothafucka",
+        message: "Invalid Number of Stocks",
       });
     }
     const user = await users.findOne({
@@ -224,6 +233,13 @@ const sellStock = async (req, res) => {
       });
     }
 
+    const purchasedStocks = await stocks.findOne({
+      where: {email},
+      attributes : [column],
+      raw: true
+    });
+    console.log(purchasedStocks?.[column]);
+    if(purchasedStocks?.[column] >= nos){
     const stockData = await sequelize.query(
       `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
       {
@@ -245,8 +261,9 @@ const sellStock = async (req, res) => {
       transactions.create({
         email: email,
         company: column,
+        description: description,
         flag: "Sold",
-        number: nos,
+        noOfStocks: nos,
       });
       return res.status(200).send({ message: "transaction success" });
     } else {
@@ -254,6 +271,11 @@ const sellStock = async (req, res) => {
         message: "User details not found",
       });
     }
+  } else {
+    return res.status(404).send({
+      message: "You cannot sell more stocks than you own.",
+    });
+  }
   } catch (error) {
     console.error(error);
     return res
