@@ -18,6 +18,10 @@ module.exports = {
             flag: {
                 type: Sequelize.STRING
             },
+            amount:{
+                type:datatypes.DOUBLE,
+                allowNull: true
+            },
             noOfStocks: {
                 type: Sequelize.INTEGER
             },
