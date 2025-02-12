@@ -14,6 +14,10 @@ module.exports=(sequelize,datatypes)=>{
         flag: {
             type:datatypes.STRING,
         },
+        amount:{
+            type:datatypes.DOUBLE,
+            allowNull: true
+        },
         noOfStocks: {
             type:datatypes.INTEGER,
         },

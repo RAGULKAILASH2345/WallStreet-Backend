@@ -190,6 +190,7 @@ const buyStock = async (req, res) => {
           email: email,
           company: column,
           flag: "Bought",
+        amount: nos*value,
           noOfStocks: nos,
           description: description,
         });
@@ -211,8 +212,8 @@ const sellStock = async (req, res) => {
     const { email } = req.user;
     const column = req.params.column;
     const description = req.body.desc;
-    const value = req.params.value;
-    const nos = req.params.nos;
+    const value = parseFloat(req.params.value);
+    const nos = parseInt(req.params.nos, 10);
     if (nos < 0) {
       return res.status(403).send({
         message: "Invalid Number of Stocks",
@@ -241,44 +242,138 @@ const sellStock = async (req, res) => {
       attributes: [column],
       raw: true,
     });
-    console.log(purchasedStocks?.[column]);
-    if (purchasedStocks?.[column] >= nos) {
-      const stockData = await sequelize.query(
-        `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
-        {
-          nest: true,
-          type: Sequelize.QueryTypes.UPDATE,
-        }
-      );
-
-      //		const stockData = await stocks.update({
-      //			[column]: sequelize.literal(`${column} - ${nos}`),
-      //			Wallet : sequelize.literal(`Wallet + ${nos}*${value}`)
-      //		},{
-      //			where: {
-      //				email,
-      //			},
-      //		});
-
-      if (stockData) {
-        transactions.create({
+    
+    if(purchasedStocks?.[column] >= nos){
+      const purchasedPrice = await transactions.findOne({
+        where: {
           email: email,
           company: column,
-          description: description,
-          flag: "Sold",
-          noOfStocks: nos,
-        });
-        return res.status(200).send({ message: "transaction success" });
-      } else {
-        return res.status(404).send({
-          message: "User details not found",
-        });
-      }
-    } else {
-      return res.status(404).send({
-        message: "You cannot sell more stocks than you own.",
+          flag: "Bought"
+        },
+        attributes : ['amount'],
+        raw: true
       });
-    }
+
+      const sellAmount = nos*value;
+      
+      if(sellAmount > purchasedPrice.amount){
+        const excess = sellAmount - purchasedPrice.amount;
+        const stockData = await sequelize.query(
+          `UPDATE stocks SET "${column}"="${column}" - :nos, "Wallet"="Wallet"+${purchasedPrice.amount}, "profit" = "profit" + ${excess} WHERE email='${email}'`,
+          {
+            replacements: { nos },
+            nest: true,
+            type: Sequelize.QueryTypes.UPDATE,
+          }
+        );
+        if (stockData) {
+          transactions.create({
+            email: email,
+            company: column,
+            description: description,
+            flag: "Sold",
+            noOfStocks: nos,
+          });
+          return res.status(200).send({ message: "transaction success" });
+        } else {
+          return res.status(404).send({
+            message: "User details not found",
+          });
+        }
+      } else {
+        let diff = purchasedPrice.amount - sellAmount;
+        const profit = await stocks.findOne({
+          where: {email},
+          attributes: ['profit'],
+          raw: true
+        });
+        if(profit.profit < diff){
+          diff = diff - profit.profit;
+          const stockData = await sequelize.query(
+            `UPDATE stocks SET "${column}"="${column}" - :nos, "Wallet"="Wallet"+${purchasedPrice.amount}-${diff}, "profit" = 0 WHERE email='${email}'`,
+            {
+              replacements: { nos },
+              nest: true,
+              type: Sequelize.QueryTypes.UPDATE,
+            }
+          );
+          if (stockData) {
+            transactions.create({
+              email: email,
+              company: column,
+              description: description,
+              flag: "Sold",
+              noOfStocks: nos,
+            });
+            return res.status(200).send({ message: "transaction success" });
+          } else {
+            return res.status(404).send({
+              message: "User details not found",
+            });
+          }
+        } else {
+          const stockData = await sequelize.query(
+            `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${purchasedPrice.amount}, "profit" = ${profit.profit} - ${diff} WHERE email='${email}'`,
+            {
+              nest: true,
+              type: Sequelize.QueryTypes.UPDATE,
+            }
+          );
+          if (stockData) {
+            transactions.create({
+              email: email,
+              company: column,
+              description: description,
+              flag: "Sold",
+              noOfStocks: nos,
+            });
+            return res.status(200).send({ message: "transaction success" });
+          } else {
+            return res.status(404).send({
+              message: "User details not found",
+            });
+          }
+          
+        }
+      }
+
+    // const stockData = await sequelize.query(
+    //   `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
+    //   {
+    //     nest: true,
+    //     type: Sequelize.QueryTypes.UPDATE,
+    //   }
+      
+    // );
+
+    //		const stockData = await stocks.update({
+    //			[column]: sequelize.literal(`${column} - ${nos}`),
+    //			Wallet : sequelize.literal(`Wallet + ${nos}*${value}`)
+    //		},{
+    //			where: {
+    //				email,
+    //			},
+    //		});
+
+    // if (stockData) {
+    //   transactions.create({
+    //     email: email,
+    //     company: column,
+    //     description: description,
+    //     flag: "Sold",
+    //     noOfStocks: nos,
+    //   });
+    //   return res.status(200).send({ message: "transaction success" });
+    // } else {
+    //   return res.status(404).send({
+    //     message: "User details not found",
+    //   });
+    // }
+  } else {
+    return res.status(404).send({
+      message: "You cannot sell more stocks than you own.",
+    });
+  }
   } catch (error) {
     console.error(error);
     return res
