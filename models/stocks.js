@@ -83,7 +83,7 @@ module.exports=(sequelize,datatypes)=>{
             type: datatypes.DOUBLE,
             defaultValue: 0.0,
             validate:{
-              min: 0.1,
+              min: 0.0,
             },
             check: {
               priceGreaterThanZero: {

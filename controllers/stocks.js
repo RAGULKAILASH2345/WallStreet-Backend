@@ -57,6 +57,54 @@ const checkUser = async (req, res) => {
       .send({ message: "Server Error. Try again.", gh: "con" });
   }
 };
+const addStock = async (req, res) => {
+  try {
+    const email = req.body.email;
+
+    console.time("create wallet");
+    await stocks
+      .create({
+        email: email,
+        QuantumCoreSystems: 0,
+        NeonByteTechnologies: 0,
+        HyperNovaSystems: 0,
+        SkyNetRobotics: 0,
+        TitanSportswear: 0,
+        ProBallEquipment: 0,
+        StrikeForceSports: 0,
+        ZenithMotors: 0,
+        OrionAutoTech: 0,
+        VoltEdgeMotors: 0,
+        TitanXAutomobiles: 0,
+        StellarBank: 0,
+        EverTrustFinancial: 0,
+        NovaCapitalHoldings: 0,
+        QuantumPay: 0,
+        SwiftCart: 0,
+        NeoWearFashion: 0,
+        HorizonMart: 0,
+        BuySmartRetail: 0,
+        BioVantaPharmaceuticals: 0,
+        MedexGenLabs: 0,
+        NeuroSynBiotech: 0,
+        GenovaHealth: 0,
+        HorizonTechInnovations: 0,
+        Wallet: 100000,
+        profit: 0, 
+      });
+
+    console.timeEnd("create wallet");
+    return res.status(200).send({
+      message: "User Registered Successfully and stock record created",
+    });
+
+  } catch (error) {
+    console.timeEnd("create wallet");
+    console.error("Error creating stock record:", error);
+    return res.status(500).send({ message: "Server Error. Try again." });
+  }
+};
+
 
 const getWallet = async (req, res) => {
   try {
@@ -219,4 +267,5 @@ module.exports = {
   checkUser,
   buyStock,
   sellStock,
+  addStock,
 };

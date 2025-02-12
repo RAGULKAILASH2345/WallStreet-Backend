@@ -66,24 +66,30 @@ const getProfile = async (req, res) => {
       });
     }
     console.log("user details:", user);
-    res.status(200).send({
-      message: "user profile details fetched successfully",
-      data: user,
-    });
-    // const stockData = await stocks.findOne({
-    //   where: {
-    //     email,
-    //   },
+    // res.status(200).send({
+    //   message: "user profile details fetched successfully",
+    //   data: user,
     // });
+    const stockData = await stocks.findOne({
+      where: {
+        email,
+      },
+      attributes: {	// reduce data exported
+				exclude: ["createdAt", "updatedAt","email","profit","Wallet"]
+			},
+    });
 
-    // if (stockData) {
-    //   const profile = { stockTable: stockData, userTable: user };
-    //   return res.send(profile);
-    // } else {
-    //   return res.status(404).send({
-    //     message: "User details not found",
-    //   });
-    // }
+    if (stockData) {
+      const profile = { stockTable: stockData, userTable: user };
+      res.status(200).send({
+        message: "user profile details fetched successfully",
+        profile
+      });
+    } else {
+      return res.status(404).send({
+        message: "User details not found",
+      });
+    }
   } catch (error) {
     console.error(error);
     return res

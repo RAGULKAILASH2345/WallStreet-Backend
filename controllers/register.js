@@ -4,7 +4,7 @@ const { kUser23 } = require("../models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { kid, name, email, phone, college, year, dept, password } = req.body;
 
@@ -33,9 +33,10 @@ const register = async (req, res) => {
       });
     }
 
-    res
-      .status(200)
-      .json({ message: "User registered successfully!", user: existingUser });
+    // res
+    //   .status(200)
+    //   .json({ message: "User registered successfully!", user: existingUser });
+    next();
   } catch (error) {
     console.error("Error registering user:", error);
     res
