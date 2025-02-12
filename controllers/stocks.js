@@ -62,49 +62,46 @@ const addStock = async (req, res) => {
     const email = req.body.email;
 
     console.time("create wallet");
-    await stocks
-      .create({
-        email: email,
-        QuantumCoreSystems: 0,
-        NeonByteTechnologies: 0,
-        HyperNovaSystems: 0,
-        SkyNetRobotics: 0,
-        TitanSportswear: 0,
-        ProBallEquipment: 0,
-        StrikeForceSports: 0,
-        ZenithMotors: 0,
-        OrionAutoTech: 0,
-        VoltEdgeMotors: 0,
-        TitanXAutomobiles: 0,
-        StellarBank: 0,
-        EverTrustFinancial: 0,
-        NovaCapitalHoldings: 0,
-        QuantumPay: 0,
-        SwiftCart: 0,
-        NeoWearFashion: 0,
-        HorizonMart: 0,
-        BuySmartRetail: 0,
-        BioVantaPharmaceuticals: 0,
-        MedexGenLabs: 0,
-        NeuroSynBiotech: 0,
-        GenovaHealth: 0,
-        HorizonTechInnovations: 0,
-        Wallet: 100000,
-        profit: 0, 
-      });
+    await stocks.create({
+      email: email,
+      QuantumCoreSystems: 0,
+      NeonByteTechnologies: 0,
+      HyperNovaSystems: 0,
+      SkyNetRobotics: 0,
+      TitanSportswear: 0,
+      ProBallEquipment: 0,
+      StrikeForceSports: 0,
+      ZenithMotors: 0,
+      OrionAutoTech: 0,
+      VoltEdgeMotors: 0,
+      TitanXAutomobiles: 0,
+      StellarBank: 0,
+      EverTrustFinancial: 0,
+      NovaCapitalHoldings: 0,
+      QuantumPay: 0,
+      SwiftCart: 0,
+      NeoWearFashion: 0,
+      HorizonMart: 0,
+      BuySmartRetail: 0,
+      BioVantaPharmaceuticals: 0,
+      MedexGenLabs: 0,
+      NeuroSynBiotech: 0,
+      GenovaHealth: 0,
+      HorizonTechInnovations: 0,
+      Wallet: 100000,
+      profit: 0,
+    });
 
     console.timeEnd("create wallet");
     return res.status(200).send({
       message: "User Registered Successfully and stock record created",
     });
-
   } catch (error) {
     console.timeEnd("create wallet");
     console.error("Error creating stock record:", error);
     return res.status(500).send({ message: "Server Error. Try again." });
   }
 };
-
 
 const getWallet = async (req, res) => {
   try {
@@ -153,7 +150,6 @@ const buyStock = async (req, res) => {
 
     const stockPurchaseAmount = value * nos;
 
-
     if (isNaN(nos) || nos <= 0) {
       return res.status(403).send({
         message: "Invalid Number of Stocks",
@@ -162,41 +158,48 @@ const buyStock = async (req, res) => {
 
     const user = await users.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).send({ message: "User details not found." });
+      return res.status(400).send({ message: "User details not found." });
+    }
+
+    const sold = await transactions.findOne({
+      where: { email: email, company: column, flag: "Sold" },
+    });
+
+    if(sold)
+    {
+      return res.status(403).send({message:"Stock already sold! Look out for other stocks!"})
     }
 
     const balance = await stocks.findOne({
-      where: {email},
-      attributes: ['Wallet'],
-      raw: true
-    })
-;
+      where: { email },
+      attributes: ["Wallet"],
+      raw: true,
+    });
+    if (balance.Wallet >= stockPurchaseAmount) {
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
+        {
+          replacements: { nos, value, email },
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      );
 
-    if(balance.Wallet >= stockPurchaseAmount){
-    const stockData = await sequelize.query(
-      `UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
-      {
-        replacements: { nos, value, email },
-        nest: true,
-        type: Sequelize.QueryTypes.UPDATE,
+      if (stockData) {
+        transactions.create({
+          email: email,
+          company: column,
+          flag: "Bought",
+          noOfStocks: nos,
+          description: description,
+        });
+        return res.status(200).send({ message: "Transaction success" });
+      } else {
+        return res.status(404).send({ message: "Stock update failed" });
       }
-    );
-
-    if (stockData) {
-      transactions.create({
-        email: email,
-        company: column,
-        flag: "Bought",
-        noOfStocks: nos,
-        description: description,
-      });
-      return res.status(200).send({ message: "Transaction success" });
     } else {
-      return res.status(404).send({ message: "Stock update failed" });
+      return res.status(404).send({ message: "Insufficient Balance" });
     }
-  } else { 
-    return res.status(404).send({message: "Insufficient Balance"});
-  }
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: "Server Error. Try again." });
@@ -234,48 +237,48 @@ const sellStock = async (req, res) => {
     }
 
     const purchasedStocks = await stocks.findOne({
-      where: {email},
-      attributes : [column],
-      raw: true
+      where: { email },
+      attributes: [column],
+      raw: true,
     });
     console.log(purchasedStocks?.[column]);
-    if(purchasedStocks?.[column] >= nos){
-    const stockData = await sequelize.query(
-      `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
-      {
-        nest: true,
-        type: Sequelize.QueryTypes.UPDATE,
+    if (purchasedStocks?.[column] >= nos) {
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
+        {
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      );
+
+      //		const stockData = await stocks.update({
+      //			[column]: sequelize.literal(`${column} - ${nos}`),
+      //			Wallet : sequelize.literal(`Wallet + ${nos}*${value}`)
+      //		},{
+      //			where: {
+      //				email,
+      //			},
+      //		});
+
+      if (stockData) {
+        transactions.create({
+          email: email,
+          company: column,
+          description: description,
+          flag: "Sold",
+          noOfStocks: nos,
+        });
+        return res.status(200).send({ message: "transaction success" });
+      } else {
+        return res.status(404).send({
+          message: "User details not found",
+        });
       }
-    );
-
-    //		const stockData = await stocks.update({
-    //			[column]: sequelize.literal(`${column} - ${nos}`),
-    //			Wallet : sequelize.literal(`Wallet + ${nos}*${value}`)
-    //		},{
-    //			where: {
-    //				email,
-    //			},
-    //		});
-
-    if (stockData) {
-      transactions.create({
-        email: email,
-        company: column,
-        description: description,
-        flag: "Sold",
-        noOfStocks: nos,
-      });
-      return res.status(200).send({ message: "transaction success" });
     } else {
       return res.status(404).send({
-        message: "User details not found",
+        message: "You cannot sell more stocks than you own.",
       });
     }
-  } else {
-    return res.status(404).send({
-      message: "You cannot sell more stocks than you own.",
-    });
-  }
   } catch (error) {
     console.error(error);
     return res

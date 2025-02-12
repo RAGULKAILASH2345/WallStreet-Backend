@@ -89,49 +89,59 @@ module.exports = { register, login };
 // const axios = require("axios");
 // const { kUser23 } = require("../models");
 // const bcrypt = require("bcrypt");
-// const register = async (req, res) => {
-//   try {
-//     const { kid } = req.body;
+const checkRegister = async (req, res) => {
+  try {
+    console.log(req.body);
 
-//     // Fetch user details from k25 database
-//     // const externalResponse = await axios.get(`http://k25db.com/user/${kid}`);
-//     // if (!externalResponse.data) {
-//     //   return res.status(404).json({ message: "User not found in external DB" });
-//     // }
+    const kid = req.body.kid; // Ensure password is provided
+    if (!kid) {
+      res.status(400).json({ message: "kid not defined" });
+    }
+    // if (!kid || !password) {
+    //   return res.status(400).json({ message: "KID and password are required" });
+    // }
 
-//     // const userData = externalResponse.data;
-//     const userData = req.body;
-//     let existingUser = await kUser23.findOne({ where: { kid: req.body.kid } });
-//     const saltRounds = 10;
-//     const salt = await bcrypt.genSalt(saltRounds);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-//     if (!existingUser) {
-//       existingUser = await kUser23.create({
-//         kid: uuidv4(),
-//         mkid: userData.kid,
-//         firstname: userData.name.split(" ")[0],
-//         lastname: userData.name.split(" ").slice(1).join(" "),
-//         email: userData.email,
-//         phone: userData.phone,
-//         college: userData.college,
-//         year: userData.year,
-//         dept: userData.dept,
-//         pwdhash: hashedPassword,
-//         // cegian: userData.cegian,
-//         // city: userData.city,
-//         // state: userData.state,
-//         // roll: userData.roll,
-//       });
-//     }
-//     res
-//       .status(200)
-//       .json({ message: "User found and stored", user: existingUser });
-//   } catch (error) {
-//     console.error("Error checking user:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Internal server error", error: error.message });
-//   }
-// };
+    // Fetch user details from external API
+    const externalResponse = await axios.get(
+      `https://api.kurukshetraceg.org.in/api/v1}`,
+      
+    );
+    console.log("kid check:", externalResponse.data);
+    if (!externalResponse.data) {
+      return res.status(404).json({ message: "User not found in external DB" });
+    }
 
-// module.exports = { register };
+    // const userData = externalResponse.data;
+    // let existingUser = await kUser23.findOne({ where: { kid } });
+
+    // const saltRounds = 10;
+    // const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // if (!existingUser) {
+    //   existingUser = await kUser23.create({
+    //     kid: uuidv4(), // Generate new unique KID
+    //     mkid: userData.kid,
+    //     firstname: userData.name.split(" ")[0],
+    //     lastname: userData.name.split(" ").slice(1).join(" "),
+    //     email: userData.email,
+    //     phone: userData.phone,
+    //     college: userData.college,
+    //     year: userData.year,
+    //     dept: userData.dept,
+    //     pwdhash: hashedPassword,
+    //   });
+    // }
+
+    // res.status(200).json({
+    //   message: "User found and stored",
+    //   user: existingUser,
+    // });
+  } catch (error) {
+    console.error("Error checking user:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+module.exports = { register, login, checkRegister };

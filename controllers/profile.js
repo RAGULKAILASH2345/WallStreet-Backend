@@ -75,7 +75,7 @@ const getProfile = async (req, res) => {
         email,
       },
       attributes: {	// reduce data exported
-				exclude: ["createdAt", "updatedAt","email","profit","Wallet"]
+				exclude: ["createdAt", "updatedAt","email","profit"]
 			},
     });
 
