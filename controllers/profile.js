@@ -27,7 +27,9 @@ const getHistory = async (req, res) => {
     });
 
     if (historyData) {
-      return res.send(historyData);
+      return res
+        .status(200)
+        .send({ message: "history successfully fetched", historyData });
     } else {
       return res.status(404).send({
         message: "User details not found",
