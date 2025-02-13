@@ -70,20 +70,29 @@ const getProfile = async (req, res) => {
     //   message: "user profile details fetched successfully",
     //   data: user,
     // });
-    const stockData = await stocks.findOne({
+    let stockData = await stocks.findOne({
       where: {
         email,
       },
-      attributes: {	// reduce data exported
-				exclude: ["createdAt", "updatedAt","email","profit"]
-			},
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "email", "profit"],
+      },
     });
+    console.log(stockData);
 
     if (stockData) {
-      const profile = { stockTable: stockData, userTable: user };
+      const walletBalance = stockData.Wallet;
+      stockData = { ...stockData.dataValues };
+      delete stockData.Wallet;
+
+      const profile = {
+        userTable: { ...user.dataValues, Wallet: walletBalance },
+        stockTable: stockData,
+      };
+
       res.status(200).send({
-        message: "user profile details fetched successfully",
-        profile
+        message: "User profile details fetched successfully",
+        profile,
       });
     } else {
       return res.status(404).send({
