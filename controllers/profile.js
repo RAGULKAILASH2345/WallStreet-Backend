@@ -55,8 +55,9 @@ const getProfile = async (req, res) => {
         ["mkid", "K! ID"],
         ["firstname", "Name"],
         ["email", "Email"],
-        ["dept", "Department"],
-        ["college", "College"],
+        ["phone","Phone"]
+        // ["dept", "Department"],
+        // ["college", "College"],
       ],
     });
 

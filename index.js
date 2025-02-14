@@ -97,6 +97,7 @@ app.get("/time", (req, res) => {
   res.json({ serverTime: new Date().toISOString() });
 });
 
+
 // app.use('/api/auth', authRoutes);
 
 // catch 404 and forward to error handler

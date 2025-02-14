@@ -6,27 +6,26 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const register = async (req, res, next) => {
   try {
-    const { kid, name, email, phone, college, year, dept, password } = req.body;
+    const { kid, name, email, phone } = req.body;
 
     let existingUser = await kUser23.findOne({ where: { email } });
 
     if (!existingUser) {
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
-      const hashedPassword = await bcrypt.hash(password, salt);
       const vsalt = crypto.randomBytes(16).toString("hex");
       const vsaltTime = new Date();
       existingUser = await kUser23.create({
         kid: uuidv4(),
-        mkid: parseInt(kid),
+        mkid: kid,
         firstname: name.split(" ")[0],
-        lastname: name.split(" ").slice(1).join(" "),
+        //lastname: name.split(" ").slice(1).join(" "),
         email,
         phone,
-        college,
-        year,
-        dept,
-        pwdhash: hashedPassword,
+        // college,
+        // year,
+        // dept,
+        // pwdhash: hashedPassword,
         salt,
         vsalt,
         vsaltTime,
@@ -46,43 +45,52 @@ const register = async (req, res, next) => {
 };
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    //console.log(email, password);
-    const user = await kUser23.findOne({
-      where: {
-        email: email,
-      },
-    });
-    console.log(user);
-    if (!user) {
-      return res.status(401).send({
-        message: "User not found.",
-      });
+    const {
+      kid,
+      firstname,
+      lastname,
+      email,
+      phone,
+      college,
+      year,
+      dept,
+      roll,
+    } = req.body;
+  
+    let existingUser = await kUser23.findOne({ where: { email } });
+  
+    if (!existingUser) {
+      return res
+        .status(404)
+        .send({ message: "Register to WallStreet Wolverine using kid!" });
     }
-
-    const validPassword = await bcrypt.compare(password, user.pwdhash);
-    if (!validPassword) {
-      return res.status(401).json({
-        status: "error",
-        error: "Unauthorized",
-        message: "Invalid credentials",
-      });
+  
+    console.log(email);
+  
+    const updatedFields = {};
+    if (!existingUser.college && college) updatedFields.college = college;
+    if (!existingUser.lastname && lastname) updatedFields.lastname = lastname;
+    if (!existingUser.year && year) updatedFields.year = year;
+    if (!existingUser.dept && dept) updatedFields.dept = dept;
+    if (!existingUser.phone && phone) updatedFields.phone = phone;
+    if (!existingUser.roll && roll) updatedFields.roll = roll;
+  
+    if (Object.keys(updatedFields).length > 0) {
+      await kUser23.update(updatedFields, { where: { email } });
     }
-    // console.log(process.env.JWTSECRET);
-    const token = jwt.sign({ id: user.kid }, process.env.JWTSECRET);
-
+  
+    const user = await kUser23.findOne({ where: { email } });
+  
     return res.status(200).json({
       status: "ok",
-      message: "Login successful",
-      token: token,
+      message: "user details updated successful",
       user,
     });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .send({ message: "Server Error. Try again.", gh: "con" });
+    return res.status(500).send({ message: "Server Error. Try again." });
   }
+  
 };
 module.exports = { register, login };
 

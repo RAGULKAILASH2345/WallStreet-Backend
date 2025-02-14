@@ -9,7 +9,7 @@ const users = require("../models").kUser23;
 const tokenAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-    console.log(token,process.env.JWTSECRET);
+    console.log(token, process.env.JWTSECRET);
 
     let tokenPayload;
     try {
@@ -19,7 +19,7 @@ const tokenAuth = async (req, res, next) => {
         message: error.name + ": " + error.message,
       });
     }
-	console.log(tokenPayload)
+    console.log(tokenPayload);
     if (!tokenPayload.id) {
       return res.status(400).send({
         message: "Invalid token.",
@@ -28,9 +28,8 @@ const tokenAuth = async (req, res, next) => {
 
     const user = await users.findOne({
       where: {
-        kid: tokenPayload.id,
+        mkid: tokenPayload.id,
       },
-	  
     });
 
     if (!user) {
