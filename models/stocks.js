@@ -1,97 +1,172 @@
-module.exports=(sequelize,datatypes)=>{
-    const stocks=sequelize.define("stocks",{
-        email:{
-            type:datatypes.STRING,
-            primaryKey:true
+module.exports = (sequelize, datatypes) => {
+  const stocks = sequelize.define("stocks", {
+    email: {
+      type: datatypes.STRING,
+      primaryKey: true,
+    },
+    QuantumCoreSystems: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    NeonByteTechnologies: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    HyperNovaSystems: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    SkyNetRobotics: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    TitanSportswear: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    ProBallEquipment: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    StrikeForceSports: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    ZenithMotors: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    OrionAutoTech: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    VoltEdgeMotors: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    TitanXAutomobiles: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    StellarBank: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    EverTrustFinancial: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    NovaCapitalHoldings: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    QuantumPay: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    SwiftCart: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    NeoWearFashion: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    HorizonMart: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    BuySmartRetail: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    BioVantaPharmaceuticals: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    MedexGenLabs: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    NeuroSynBiotech: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    GenovaHealth: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    HorizonTechInnovations: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    Wallet: {
+      type: datatypes.INTEGER,
+      validate: {
+        min: 0,
+      },
+    },
+    profit: {
+      type: datatypes.DOUBLE,
+      defaultValue: 0.0,
+      validate: {
+        min: 0.0,
+      },
+      check: {
+        priceGreaterThanZero: {
+          args: [0],
+          msg: "Price must be greater than zero",
         },
-        QuantumCoreSystems: {
-            type:datatypes.INTEGER,
-        },
-        NeonByteTechnologies: {
-            type:datatypes.INTEGER,
-        },
-        HyperNovaSystems: {
-            type:datatypes.INTEGER,
-        },
-        SkyNetRobotics: {
-            type:datatypes.INTEGER,
-        },
-        TitanSportswear: {
-            type:datatypes.INTEGER,
-        },
-        ProBallEquipment: {
-            type:datatypes.INTEGER,
-        },
-        StrikeForceSports: {
-            type:datatypes.INTEGER,
-        },
-        ZenithMotors: {
-            type:datatypes.INTEGER,
-        },
-        OrionAutoTech: {
-            type:datatypes.INTEGER,
-        },
-        VoltEdgeMotors: {
-            type:datatypes.INTEGER,
-        },
-        TitanXAutomobiles: {
-            type:datatypes.INTEGER,
-        },
-        StellarBank: {
-            type:datatypes.INTEGER,
-        },
-        EverTrustFinancial: {
-            type:datatypes.INTEGER,
-        },
-        NovaCapitalHoldings: {
-            type:datatypes.INTEGER,
-        },
-        QuantumPay: {
-            type:datatypes.INTEGER,
-        },
-        SwiftCart: {
-            type:datatypes.INTEGER,
-        },
-        NeoWearFashion: {
-            type:datatypes.INTEGER,
-        },
-        HorizonMart: {
-            type:datatypes.INTEGER,
-        },
-        BuySmartRetail: {
-            type:datatypes.INTEGER,
-        },
-        BioVantaPharmaceuticals: {
-            type:datatypes.INTEGER,
-        },
-        MedexGenLabs: {
-            type:datatypes.INTEGER,
-        },
-        NeuroSynBiotech: {
-            type:datatypes.INTEGER,
-        },
-        GenovaHealth: {
-            type:datatypes.INTEGER,
-        },
-        HorizonTechInnovations: {
-            type:datatypes.INTEGER,
-        },
-        Wallet: {
-            type:datatypes.INTEGER,
-        },
-        profit:{
-            type: datatypes.DOUBLE,
-            defaultValue: 0.0,
-            validate:{
-              min: 0.0,
-            },
-            check: {
-              priceGreaterThanZero: {
-                args: [0],
-                msg: 'Price must be greater than zero',
-              },
-            },
-          }
-    });
-    return stocks;
-}
+      },
+    },
+  });
+  return stocks;
+};
