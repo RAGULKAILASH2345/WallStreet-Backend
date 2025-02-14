@@ -21,6 +21,10 @@ module.exports=(sequelize,datatypes)=>{
         noOfStocks: {
             type:datatypes.INTEGER,
         },
+        remaining:{
+            type:datatypes.INTEGER,
+            allowNull: true,
+        },
         description: {
             type: datatypes.STRING,
             allowNull: false,

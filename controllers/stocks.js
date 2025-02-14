@@ -158,50 +158,43 @@ const buyStock = async (req, res) => {
 
     const user = await users.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).send({ message: "User details not found." });
-    }
-
-    const sold = await transactions.findOne({
-      where: { email: email, company: column, flag: "Sold" },
-    });
-
-    if (sold) {
-      return res
-        .status(403)
-        .send({ message: "Stock already sold! Look out for other stocks!" });
+      return res.status(404).send({ message: "User details not found." });
     }
 
     const balance = await stocks.findOne({
-      where: { email },
-      attributes: ["Wallet"],
-      raw: true,
-    });
-    if (balance.Wallet >= stockPurchaseAmount) {
-      const stockData = await sequelize.query(
-        `UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
-        {
-          replacements: { nos, value, email },
-          nest: true,
-          type: Sequelize.QueryTypes.UPDATE,
-        }
-      );
+      where: {email},
+      attributes: ['Wallet'],
+      raw: true
+    })
+;
 
-      if (stockData) {
-        transactions.create({
-          email: email,
-          company: column,
-          flag: "Bought",
-          amount: nos * value,
-          noOfStocks: nos,
-          description: description,
-        });
-        return res.status(200).send({ message: "Transaction success" });
-      } else {
-        return res.status(404).send({ message: "Stock update failed" });
+    if(balance.Wallet >= stockPurchaseAmount){
+    const stockData = await sequelize.query(
+      `UPDATE stocks SET "${column}" = "${column}" + :nos, "Wallet" = "Wallet" - :nos * :value WHERE email = :email`,
+      {
+        replacements: { nos, value, email },
+        nest: true,
+        type: Sequelize.QueryTypes.UPDATE,
       }
+    );
+
+    if (stockData) {
+      transactions.create({
+        email: email,
+        company: column,
+        flag: "Bought",
+        amount: nos*value,
+        noOfStocks: nos,
+        remaining: nos,
+        description: description,
+      });
+      return res.status(200).send({ message: "Transaction success" });
     } else {
-      return res.status(404).send({ message: "Insufficient Balance" });
+      return res.status(404).send({ message: "Stock update failed" });
     }
+  } else { 
+    return res.status(404).send({message: "Insufficient Balance"});
+  }
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: "Server Error. Try again." });
@@ -238,151 +231,136 @@ const sellStock = async (req, res) => {
       });
     }
 
-    const purchasedStocks = await stocks.findOne({
-      where: { email },
-      attributes: [column],
-      raw: true,
-    });
+    const totalStocks = await transactions.sum('remaining', {
+      where: {
+          flag: 'Bought',
+          email: email, 
+          company: column,
+          remaining: { [Op.gt]: 0 }
+      }
+  });
 
-    if (purchasedStocks?.[column] >= nos) {
-      const purchasedPrice = await transactions.findOne({
-        where: {
+  const currentNos = nos;
+
+    
+  if(totalStocks < currentNos){
+    return res.status(404).send({
+      message: "You cannot sell more stocks than you own.",
+    });
+  }
+  while(currentNos != 0){
+    const Purchased = await transactions.findOne({
+      attributes: ['remaining','noOfStocks','amount','createdAt'],
+      where: {
+          flag: 'Bought',
           email: email,
           company: column,
-          flag: "Bought",
-        },
-        attributes: ["amount"],
-        raw: true,
-      });
+          remaining: { [Op.gt]: 0 }  
+      },
+      order: [['createdAt', 'ASC']],  
+  });
+  
+  const individualPrice = Purchased.amount/Purchased.noOfStocks;
 
-      const sellAmount = nos * value;
-
-      if (sellAmount > purchasedPrice.amount) {
-        const excess = sellAmount - purchasedPrice.amount;
-        const stockData = await sequelize.query(
-          `UPDATE stocks SET "${column}"="${column}" - :nos, "Wallet"="Wallet"+${purchasedPrice.amount}, "profit" = "profit" + ${excess} WHERE email='${email}'`,
-          {
-            replacements: { nos },
-            nest: true,
-            type: Sequelize.QueryTypes.UPDATE,
-          }
-        );
-        if (stockData) {
-          transactions.create({
-            email: email,
-            company: column,
-            description: description,
-            flag: "Sold",
-            noOfStocks: nos,
-            amount: nos * value,
-          });
-          return res.status(200).send({ message: "transaction success" });
-        } else {
-          return res.status(404).send({
-            message: "User details not found",
-          });
+  if(currentNos >= Purchased.remaining){
+    
+    const initialPrice = individualPrice*(Purchased.remaining);
+    const currentPrice = value*(Purchased.remaining);
+    const diff = Purchased.remaining;
+    if(initialPrice < currentPrice){
+      const excess = currentPrice - initialPrice;
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}"="${column}" - :diff, "Wallet"="Wallet"+${initialPrice}, "profit" = "profit" + ${excess} WHERE email='${email}'`,
+        {
+          replacements: { diff },
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
         }
-      } else {
-        let diff = purchasedPrice.amount - sellAmount;
-        const profit = await stocks.findOne({
-          where: { email },
-          attributes: ["profit"],
-          raw: true,
-        });
-        if (profit.profit < diff) {
-          diff = diff - profit.profit;
-          const stockData = await sequelize.query(
-            `UPDATE stocks SET "${column}"="${column}" - :nos, "Wallet"="Wallet"+${purchasedPrice.amount}-${diff}, "profit" = 0 WHERE email='${email}'`,
-            {
-              replacements: { nos },
-              nest: true,
-              type: Sequelize.QueryTypes.UPDATE,
-            }
-          );
-          if (stockData) {
-            transactions.create({
-              email: email,
-              company: column,
-              description: description,
-              flag: "Sold",
-              noOfStocks: nos,
-              amount: nos * value,
-            });
-            return res.status(200).send({ message: "transaction success" });
-          } else {
-            return res.status(404).send({
-              message: "User details not found",
-            });
-          }
-        } else {
-          const stockData = await sequelize.query(
-            `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${purchasedPrice.amount}, "profit" = ${profit.profit} - ${diff} WHERE email='${email}'`,
-            {
-              nest: true,
-              type: Sequelize.QueryTypes.UPDATE,
-            }
-          );
-          if (stockData) {
-            transactions.create({
-              email: email,
-              company: column,
-              description: description,
-              flag: "Sold",
-              noOfStocks: nos,
-            });
-            return res.status(200).send({ message: "transaction success" });
-          } else {
-            return res.status(404).send({
-              message: "User details not found",
-            });
-          }
+      );
+      const transactionsData = await sequelize.query(
+        `UPDATE transactions SET "remaining" = 0 WHERE email='${email}' and flag ='Bought' and company = '${column}' and createdAt = '${Purchased.createdAt}`,
+        {
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
         }
-      }
-
-      // const stockData = await sequelize.query(
-      //   `UPDATE stocks SET "${column}"="${column}" - ${nos}, "Wallet"="Wallet"+${nos}*${value} WHERE email='${email}'`,
-      //   {
-      //     nest: true,
-      //     type: Sequelize.QueryTypes.UPDATE,
-      //   }
-
-      // );
-
-      //		const stockData = await stocks.update({
-      //			[column]: sequelize.literal(`${column} - ${nos}`),
-      //			Wallet : sequelize.literal(`Wallet + ${nos}*${value}`)
-      //		},{
-      //			where: {
-      //				email,
-      //			},
-      //		});
-
-      // if (stockData) {
-      //   transactions.create({
-      //     email: email,
-      //     company: column,
-      //     description: description,
-      //     flag: "Sold",
-      //     noOfStocks: nos,
-      //   });
-      //   return res.status(200).send({ message: "transaction success" });
-      // } else {
-      //   return res.status(404).send({
-      //     message: "User details not found",
-      //   });
-      // }
+      )
     } else {
-      return res.status(404).send({
-        message: "You cannot sell more stocks than you own.",
-      });
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}"="${column}" - :diff, "Wallet"="Wallet"+${currentPrice} WHERE email='${email}'`,
+        {
+          replacements: { diff },
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      );
+      const transactionsData = await sequelize.query(
+        `UPDATE transactions SET "remaining" = 0 WHERE email='${email}' and flag ='Bought' and company = '${column}' and createdAt = '${Purchased.createdAt}`,
+        {
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      )
     }
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({ message: "Server Error. Try again.", gh: "con" });
+
+    
+    currentNos -= Purchased.remaining;
+    
+  } else {
+    const initialPrice = individualPrice*currentNos;
+    const currentPrice = value*currentNos;
+    if(initialPrice < currentPrice){
+      const excess = currentPrice - initialPrice;
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}"="${column}" - :currentNos, "Wallet"="Wallet"+${initialPrice}, "profit" = "profit" + ${excess} WHERE email='${email}'`,
+        {
+          replacements: { currentNos },
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      );
+      const transactionsData = await sequelize.query(
+        `UPDATE transactions SET "remaining" = "remaining" - ${currentNos} WHERE email='${email}' and flag ='Bought' and company = '${column}' and createdAt = '${Purchased.createdAt}`,
+        {
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      )
+      
+    } else {
+      const stockData = await sequelize.query(
+        `UPDATE stocks SET "${column}"="${column}" - :currentNos, "Wallet"="Wallet"+${currentPrice} WHERE email='${email}'`,
+        {
+          replacements: { currentNos },
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      );
+      const transactionsData = await sequelize.query(
+        `UPDATE transactions SET "remaining" = "remaining" - ${currentNos} WHERE email='${email}' and flag ='Bought' and company = '${column}' and createdAt = '${Purchased.createdAt}`,
+        {
+          nest: true,
+          type: Sequelize.QueryTypes.UPDATE,
+        }
+      )
+    }
+    currentNos = 0;
   }
-};
+}
+
+  transactions.create({
+    email: email,
+    company: column,
+    description: description,
+    amount: nos*value,
+    flag: "Sold",
+    noOfStocks: nos,
+  });
+  return res.status(200).send({ message: "transaction success" });
+  } catch(error){
+    console.error(error);
+    return res.status(500).send({ message: "Server Error. Try again." });
+  }
+}
 
 module.exports = {
   getWallet,
