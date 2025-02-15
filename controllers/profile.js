@@ -54,10 +54,10 @@ const getProfile = async (req, res) => {
       attributes: [
         ["mkid", "K! ID"],
         ["firstname", "Name"],
+        ["college", "College"],
         ["email", "Email"],
-        ["phone","Phone"]
-        // ["dept", "Department"],
-        // ["college", "College"],
+        ["dept", "Department"],
+        ["phone", "Phone"],
       ],
     });
 
