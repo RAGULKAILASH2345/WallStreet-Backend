@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const register = async (req, res, next) => {
   try {
-    const { kid, name, email, phone } = req.body;
+    const { kid, email } = req.body;
 
     let existingUser = await kUser23.findOne({ where: { email } });
 
@@ -70,6 +70,7 @@ const login = async (req, res) => {
     const updatedFields = {};
     if (!existingUser.college && college) updatedFields.college = college;
     if (!existingUser.lastname && lastname) updatedFields.lastname = lastname;
+    if (!existingUser.firstname && firstname) updatedFields.firstname = firstname;
     if (!existingUser.year && year) updatedFields.year = year;
     if (!existingUser.dept && dept) updatedFields.dept = dept;
     if (!existingUser.phone && phone) updatedFields.phone = phone;
