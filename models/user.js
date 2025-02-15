@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
     },
     mkid: DataTypes.STRING,
+    mkid: DataTypes.STRING,
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,
     email: {
@@ -35,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     // cegian: DataTypes.BOOLEAN,
     // city: DataTypes.STRING,
     // state: DataTypes.STRING,
-     roll: DataTypes.STRING,
+    roll: DataTypes.STRING,
     salt: DataTypes.STRING,
     vsaltTime: DataTypes.DATE,
     vsalt: DataTypes.STRING,

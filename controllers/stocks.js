@@ -124,10 +124,11 @@ const getWallet = async (req, res) => {
       where: {
         email,
       },
+      attributes: ['Wallet'],
     });
 
     if (stockData) {
-      return res.send(stockData);
+      return res.send({wallet:stockData.Wallet});
     } else {
       return res.status(404).send({
         message: "User details not found",

@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/tokenAuth");
 const stocks = require("../controllers/stocks");
 
 router.get(
-	"/",
+	"/wallet",
 	authMiddleware.tokenAuth,
 	stocks.getWallet,
 )

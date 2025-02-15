@@ -15,6 +15,7 @@ var historyRouter = require("./routes/history");
 var adminRouter = require("./routes/dataDump");
 var authRoutes = require("./routes/auth");
 var registerRouter = require("./routes/register");
+
 var app = express();
 global.index = 1;
 global.nIndex = 1;

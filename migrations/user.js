@@ -11,46 +11,43 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  }
-
-  kUser23.init(
-    {
-      kid: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
-      mkid: DataTypes.STRING,
-      firstname: DataTypes.STRING,
-      lastname: DataTypes.STRING,
-      email: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-      },
-      phone: DataTypes.STRING,
-      college: DataTypes.STRING,
-      year: DataTypes.INTEGER,
-      dept: DataTypes.STRING,
-      pwdhash: DataTypes.STRING,
-      // cegian: DataTypes.BOOLEAN,
-      // city: DataTypes.STRING,
-      // state: DataTypes.STRING,
-      roll: DataTypes.STRING,
-      salt: DataTypes.STRING,
-      vsaltTime: DataTypes.DATE,
-      vsalt: DataTypes.STRING,
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
+  };
+  
+  kUser23.init({
+    kid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
     },
-    {
-      sequelize,
-      modelName: "kUser23",
-    }
-  );
+    mkid: DataTypes.STRING,
+    firstname: DataTypes.STRING,
+    lastname: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+    },
+    phone: DataTypes.STRING,
+    college: DataTypes.STRING,
+    year: DataTypes.INTEGER,
+    dept: DataTypes.STRING,
+    pwdhash: DataTypes.STRING,
+    // cegian: DataTypes.BOOLEAN,
+    // city: DataTypes.STRING,
+    // state: DataTypes.STRING,
+    roll: DataTypes.STRING,
+    salt: DataTypes.STRING,
+    vsaltTime: DataTypes.DATE,
+    vsalt: DataTypes.STRING,
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+  },
+  updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+  }
+  }, {
+    sequelize,
+    modelName: 'kUser23',
+  });
   return kUser23;
 };
