@@ -7,6 +7,7 @@ const news = require('../data/news.json');
 /* GET users listing. */
 
 router.get('/', function (req, res, next) {
+  
 
   let date = new Date();
   let minutes = date.getMinutes();

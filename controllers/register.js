@@ -18,10 +18,10 @@ const register = async (req, res, next) => {
       existingUser = await kUser23.create({
         kid: uuidv4(),
         mkid: kid,
-        firstname: name.split(" ")[0],
+        // firstname: name.split(" ")[0],
         //lastname: name.split(" ").slice(1).join(" "),
         email,
-        phone,
+        // phone,
         // college,
         // year,
         // dept,
