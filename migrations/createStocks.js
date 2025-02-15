@@ -8,76 +8,79 @@ module.exports = {
                 type: Sequelize.STRING,
 
             },
-            QuantumCoreSystems: {
+            ABCIndustries: {
                 type:datatypes.INTEGER,
             },
-            NeonByteTechnologies: {
+            DEFTechLtd: {
                 type:datatypes.INTEGER,
             },
-            HyperNovaSystems: {
+            ClindaPharmaceuticals: {
                 type:datatypes.INTEGER,
             },
-            SkyNetRobotics: {
+            GlobalEnergyCorp: {
                 type:datatypes.INTEGER,
             },
-            TitanSportswear: {
+            // TitanSportswear: {
+            //     type:datatypes.INTEGER,
+            // },
+            LMNMotors: {
                 type:datatypes.INTEGER,
             },
-            ProBallEquipment: {
+            PDFSoftwareSolutions: {
                 type:datatypes.INTEGER,
             },
-            StrikeForceSports: {
+            EclipseSolarTechnologies: {
                 type:datatypes.INTEGER,
             },
-            ZenithMotors: {
+            SunshineRetailers: {
                 type:datatypes.INTEGER,
             },
-            OrionAutoTech: {
+            TitunManufacturing: {
                 type:datatypes.INTEGER,
             },
-            VoltEdgeMotors: {
+            QuantumTelecom: {
                 type:datatypes.INTEGER,
             },
-            TitanXAutomobiles: {
+            KickdonaldsFoods: {
                 type:datatypes.INTEGER,
             },
-            StellarBank: {
+            ZiplaPharmaceuticals: {
                 type:datatypes.INTEGER,
             },
-            EverTrustFinancial: {
+            HorizonElectric: {
                 type:datatypes.INTEGER,
             },
-            NovaCapitalHoldings: {
+            VelosityMotors: {
                 type:datatypes.INTEGER,
             },
-            QuantumPay: {
+            CTpexChemicals: {
                 type:datatypes.INTEGER,
             },
-            SwiftCart: {
+            AlphaElectronics: {
                 type:datatypes.INTEGER,
             },
-            NeoWearFashion: {
+            KicroKaxCommunications: {
                 type:datatypes.INTEGER,
             },
-            HorizonMart: {
+            AquaDynamicsCorp: {
                 type:datatypes.INTEGER,
             },
-            BuySmartRetail: {
+            OceanXTechnologies: {
                 type:datatypes.INTEGER,
             },
-            BioVantaPharmaceuticals: {
+            MarineTechInnovations: {
                 type:datatypes.INTEGER,
             },
-            MedexGenLabs: {
+            BlueWaveSystems: {
                 type:datatypes.INTEGER,
             },
-            NeuroSynBiotech: {
+            SeaventureTechnologies: {
                 type:datatypes.INTEGER,
             },
-            GenovaHealth: {
+            TideInnovations: {
                 type:datatypes.INTEGER,
             },
-            HorizonTechInnovations: {
+            DeepCurrentRobotics: {
                 type:datatypes.INTEGER,
             },
             Wallet: {

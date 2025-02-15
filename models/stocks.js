@@ -4,145 +4,157 @@ module.exports = (sequelize, datatypes) => {
       type: datatypes.STRING,
       primaryKey: true,
     },
-    QuantumCoreSystems: {
+    ABCIndustries: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    NeonByteTechnologies: {
+    DEFTechLtd: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    HyperNovaSystems: {
+    ClindaPharmaceuticals: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    SkyNetRobotics: {
+    GlobalEnergyCorp: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    TitanSportswear: {
+    // TitanSportswear: {
+    //   type: datatypes.INTEGER,
+    //   validate: {
+    //     min: 0,
+    //   },
+    // },
+    LMNMotors: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    ProBallEquipment: {
+    PDFSoftwareSolutions: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    StrikeForceSports: {
+    EclipseSolarTechnologies: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    ZenithMotors: {
+    SunshineRetailers: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    OrionAutoTech: {
+    TitunManufacturing: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    VoltEdgeMotors: {
+    QuantumTelecom: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    TitanXAutomobiles: {
+    KickdonaldsFoods: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    StellarBank: {
+    ZiplaPharmaceuticals: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    EverTrustFinancial: {
+    HorizonElectric: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    NovaCapitalHoldings: {
+    VelosityMotors: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    QuantumPay: {
+    CTpexChemicals: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    SwiftCart: {
+    AlphaElectronics: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    NeoWearFashion: {
+    KicroKaxCommunications: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    HorizonMart: {
+    AquaDynamicsCorp: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    BuySmartRetail: {
+    OceanXTechnologies: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    BioVantaPharmaceuticals: {
+    // BuySmartRetail: {
+    //   type: datatypes.INTEGER,
+    //   validate: {
+    //     min: 0,
+    //   },
+    // },
+    MarineTechInnovations: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    MedexGenLabs: {
+    BlueWaveSystems: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    NeuroSynBiotech: {
+    SeaventureTechnologies: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    GenovaHealth: {
+    TideInnovations: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
       },
     },
-    HorizonTechInnovations: {
+    DeepCurrentRobotics: {
       type: datatypes.INTEGER,
       validate: {
         min: 0,
